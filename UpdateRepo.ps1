@@ -24,3 +24,5 @@ git commit -m $commitMessage
 
 # Push to main branch
 git push origin main
+
+git push origin master
