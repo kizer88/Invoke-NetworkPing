@@ -14,7 +14,16 @@ A battle-tested network ping utility that handles multi-domain warfare across CV
 
 ## 🎯 Quick Start
 
-[code block 1 will go here]
+```powershell:D:\Pingz\Network-Ping\Invoke-NetworkPing.ps1
+# Basic ping of a single computer
+Invoke-NetworkPing -ComputerName "MYPC01"
+
+# Multiple computers with Excel export
+Invoke-NetworkPing -ComputerNames "MYPC01","MYPC02","MYPC03" -ExportToExcel
+
+# Full arsenal deployment
+Invoke-NetworkPing -ComputerNames (Get-Content .\computers.txt) -ExportToExcel -EmailReport -AdvancedPing
+
 
 ## ⚡ Performance
 
@@ -40,7 +49,23 @@ When things go wrong (and they will), we've got you covered:
 
 ## 📊 Output Example
 
-[code block 2 will go here]
+
+# Sample Output Structure
+{
+    "Total_Targets": 150,
+    "Online_Percent": "87.33%",
+    "Online_Targets": 131,
+    "Offline_Percent": "12.67%",
+    "Offline_Targets": 19,
+    "CVS_Targets": 75,
+    "IM1_Targets": 75,
+    "CVS_Targets_Online": 65,
+    "IM1_Targets_Online": 66,
+    "CVS_Targets_Offline": 10,
+    "IM1_Targets_Offline": 9,
+    "Execution_Time": "00:01:23"
+}
+
 
 ## 🎭 Known Quirks
 
