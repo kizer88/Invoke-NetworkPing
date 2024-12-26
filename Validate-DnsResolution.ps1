@@ -371,6 +371,16 @@ function Validate-DnsResolution {
         Write-Host "Not Found in SCCM: $($summary.NotFound)" -ForegroundColor Red
         Write-Host "Errors encountered: $($summary.Errors)" -ForegroundColor Red
 
+        # Add detailed visualization for problematic records
+        $problemRecords = $results | Where-Object { 
+            $_.ValidationStatus -in @('Failed', 'AuthDNSIssue', 'Mismatched') 
+        }
+        
+        if ($problemRecords) {
+            Write-Host "`nDetailed Analysis of Problem Records:" -ForegroundColor Yellow
+            $problemRecords | Format-DnsValidationResults
+        }
+
         # Return results sorted by status (most critical first)
         return $results | Sort-Object -Property @{
             Expression = {
@@ -452,4 +462,64 @@ function Get-SystemLocation {
         }
     }
     return $null
+}
+
+# Add visualization helper function
+function Format-DnsValidationResults {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [PSObject[]]$Results
+    )
+    
+    process {
+        foreach ($result in $Results) {
+            # Create color-coded status indicator
+            $statusColor = switch ($result.ValidationStatus) {
+                'Failed' { 'Red' }
+                'AuthDNSIssue' { 'Yellow' }
+                'Verified' { 'Green' }
+                'FullyVerified' { 'Cyan' }
+                default { 'White' }
+            }
+
+            # Build DNS chain visualization
+            $dnsChain = @"
+DNS Resolution Chain for $($result.ComputerName).$($result.Domain)
+Local DNS  : $($result.LocalDnsResult)
+AUTH DNS   : $($result.AuthDnsResult)
+Expected   : $($result.ExpectedIPs -join ', ')
+"@
+            
+            # Add trust path indicators
+            $trustPath = @"
+Trust Path:
+CVS → AUTH : $([char]::ConvertFromUtf32(0x2714))
+AUTH → IM1 : $([char]::ConvertFromUtf32(0x2714))
+"@
+
+            # Highlight discrepancies
+            $issues = @()
+            if ($result.LocalDnsResult -ne $result.AuthDnsResult) {
+                $issues += "Local/AUTH DNS mismatch"
+            }
+            if ($result.ExpectedIPs -notcontains $result.LocalDnsResult) {
+                $issues += "IP doesn't match SCCM record"
+            }
+            if (-not $result.ReverseMatch) {
+                $issues += "Reverse lookup failed"
+            }
+
+            # Output formatted result
+            Write-Host "`n$('=' * 80)" -ForegroundColor Blue
+            Write-Host $dnsChain
+            Write-Host "Status: $($result.ValidationStatus)" -ForegroundColor $statusColor
+            Write-Host $trustPath
+            
+            if ($issues) {
+                Write-Host "`nDiscrepancies Found:" -ForegroundColor Yellow
+                $issues | ForEach-Object { Write-Host "- $_" -ForegroundColor Red }
+            }
+        }
+    }
 } 

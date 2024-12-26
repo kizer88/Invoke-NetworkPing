@@ -9,20 +9,27 @@ if (-not (Test-Path ".git")) {
     git remote add origin $repoUrl
 }
 
-# Stage all changes
-git add .
+# Sync with remote first
+git pull origin master
 
-# Commit with meaningful message
-$commitMessage = "feat: Add DNS validation engine with multi-domain support
-- Add DNS validation framework
-- Implement parallel resolution
-- Add trust-aware validation
-- Include SCCM correlation
-- Add detailed validation reporting"
+# Stage modified files
+git add UpdateRepo.ps1
+git add Validate-DnsResolution.ps1
 
+# Get changes for commit message
+$dnsChanges = git diff --cached Validate-DnsResolution.ps1
+$commitMessage = "feat: DNS validation updates`n"
+
+if ($dnsChanges -match "parallel") {
+    $commitMessage += "- Enhanced parallel processing`n"
+}
+if ($dnsChanges -match "SCCM") {
+    $commitMessage += "- Updated SCCM integration`n"
+}
+if ($dnsChanges -match "domain") {
+    $commitMessage += "- Improved multi-domain handling`n"
+}
+
+# Commit and push
 git commit -m $commitMessage
-
-# Push to main branch
-git push origin main
-
 git push origin master
