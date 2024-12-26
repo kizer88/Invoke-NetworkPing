@@ -21,12 +21,13 @@ Multi-domain DNS resolution faces critical challenges in our environment:
    - Migration complications
 
 ## DNS Trust Chain Problem
-
+```ascii
 +---------------+     +-------------------------------+     +---------------+
 |      CVS      |     |             AUTH              |     |      IM1      |
 | [Current DNS] | → x | [Rejects replication updates] | x ← | [Current DNS] |
 |  [Stale DNS]  | ← ← |    [replicates stale data]    | → → |  [Stale DNS]  |
 +---------------+     +-------------------------------+     +---------------+
+```
 Nothing says "I reject your reality and substitute my own" better than this scenario.
 
 This visualization demonstrates:
@@ -47,11 +48,13 @@ This visualization demonstrates:
    - Service connectivity breaks
 
 ## Trust Chain Architecture
+```ascii
 +---------------+     +-------------------------------+     +---------------+
 |      CVS      |     |             AUTH              |     |      IM1      |
 | [Current DNS] | → x | [Rejects replication updates] | x ← | [Current DNS] |
 |  [Stale DNS]  | ← ← |    [replicates stale data]    | → → |  [Stale DNS]  |
 +---------------+     +-------------------------------+     +---------------+
+```
 Nothing says "I reject your reality and substitute my own" better than this scenario.
 
 ## Validation Framework Design: Trust But Verify (Because AUTH Won't)
