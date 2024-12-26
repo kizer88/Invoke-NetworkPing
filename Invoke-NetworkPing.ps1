@@ -252,7 +252,6 @@ function Invoke-NetworkPing {
         $Global:CachedSystems = $null
     }
 
-    
     function Query-SCCMServers {
         Write-Verbose "Checking for cached SCCM data..."
         
@@ -266,7 +265,7 @@ function Invoke-NetworkPing {
         Write-Progress -Activity "SCCM Systems" -Status "Querying SCCM Servers" -PercentComplete 0
         Write-Verbose "No cached data found, querying SCCM servers..."
         $Global:CachedSystems = @{}
-
+    
         
         try {
             $domain = $config.Domains['IM1']
@@ -274,18 +273,18 @@ function Invoke-NetworkPing {
             Write-Verbose "Querying IM1 SCCM Server: $($domain.CMServer)"
             $query = "Select Name, IPAddresses, ResourceID, FullDomainName from SMS_R_System"
             $devices = Get-WmiObject -Query $query -Namespace $domain.Namespace -ComputerName $domain.CMServer -ErrorAction Stop
-
+    
             Write-Progress -Activity "SCCM Systems" -Status "Processing IM1 Results" -PercentComplete 50
             $deviceCount = 0
             $totalDevices = $devices.Count
-
+    
             foreach ($device in $devices) {
                 $deviceCount++
                 if ($deviceCount % 100 -eq 0) {
                     $percentComplete = [math]::Min(75, 50 + ($deviceCount / $totalDevices * 25))
                     Write-Progress -Activity "SCCM Systems" -Status "Processing IM1 Device $deviceCount of $totalDevices" -PercentComplete $percentComplete
                 }
-
+    
                 $Global:CachedSystems[$device.Name] = @{
                     DNSSuffix      = $domain.DNSSuffix
                     IPAddresses    = $device.IPAddresses
@@ -299,7 +298,7 @@ function Invoke-NetworkPing {
         catch {
             Add-SyncHashError -Target $domain.CMServer -ErrorRecord $_ -Operation "IM1 SCCM Query"
         }
-
+    
         
         try {
             $domain = $config.Domains['CVS']
@@ -307,19 +306,19 @@ function Invoke-NetworkPing {
             Write-Verbose "Querying CVS SCCM Server: $($domain.CMServer)"
             $query = "Select Name, IPAddresses, ResourceID, FullDomainName from SMS_R_System"
             $devices = Get-WmiObject -Query $query -Namespace $domain.Namespace -ComputerName $domain.CMServer -ErrorAction Stop
-
+    
             Write-Progress -Activity "SCCM Systems" -Status "Processing CVS Results" -PercentComplete 85
             $deviceCount = 0
             $totalDevices = $devices.Count
             $addedDevices = 0
-
+    
             foreach ($device in $devices) {
                 $deviceCount++
                 if ($deviceCount % 100 -eq 0) {
                     $percentComplete = [math]::Min(99, 85 + ($deviceCount / $totalDevices * 14))
                     Write-Progress -Activity "SCCM Systems" -Status "Processing CVS Device $deviceCount of $totalDevices (Added: $addedDevices)" -PercentComplete $percentComplete
                 }
-
+    
                 if (-not $Global:CachedSystems.ContainsKey($device.Name)) {
                     $Global:CachedSystems[$device.Name] = @{
                         DNSSuffix      = $domain.DNSSuffix
@@ -336,13 +335,12 @@ function Invoke-NetworkPing {
         catch {
             Add-SyncHashError -Target $domain.CMServer -ErrorRecord $_ -Operation "CVS SCCM Query"
         }
-
+    
         Write-Progress -Activity "SCCM Systems" -Status "Cache Complete" -PercentComplete 100
         Write-Verbose "Total systems in cache: $($Global:CachedSystems.Count)"
         $global:syncHash.allSystems = $Global:CachedSystems.Clone()
         Write-Progress -Activity "SCCM Systems" -Completed
     }
-
     
     function Get-ProperFQDN {
         param(
