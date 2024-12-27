@@ -1,6 +1,7 @@
 # First load Query-SCCMServers
 . $PSScriptRoot\Query-SCCMServers.ps1
-
+#. .\Export-DnsValidationReport.ps1
+. $PSScriptRoot\Export-DnsValidationReport.ps1
 function Validate-DnsResolution {
     [CmdletBinding()]
     param(
@@ -11,10 +12,41 @@ function Validate-DnsResolution {
         [int]$ThrottleLimit = 32,
         
         [Parameter(Mandatory = $false)]
-        [switch]$IncludeSccmData
+        [switch]$IncludeSccmData,
+
+        [Parameter()]
+        [ValidateSet('None', 'View', 'Email', 'Both')]
+        [string]$ReportAction = 'None',
+
+        [Parameter()]
+        [string]$ReportPath,
+
+        [Parameter()]
+        [string[]]$EmailRecipients
     )
 
     begin {
+        # Define authoritative DNS servers at script scope
+        $script:domainDNS = @{
+            'CVS' = @('15.97.197.92', '15.97.196.29')  # corsi-cvsdc02/03
+            'IM1' = @('15.97.196.26', '15.97.196.27', '15.97.196.28')  # im1dc01/02/03
+        } 
+        # Set default report path if none specified
+        if (-not $ReportPath) {
+            $scriptRoot = $PSScriptRoot
+            if (-not $scriptRoot) {
+                $scriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
+            }
+            $timestamp = Get-Date -Format 'yyyyMMdd-HHmm'
+            $ReportPath = Join-Path -Path $scriptRoot -ChildPath "DNSValidationReport-$timestamp.html"
+        }
+
+        # Create reports directory if it doesn't exist
+        $reportDir = Split-Path -Parent -Path $ReportPath
+        if (-not (Test-Path -Path $reportDir)) {
+            New-Item -ItemType Directory -Path $reportDir -Force | Out-Null
+        }
+
         # Initialize domain-specific settings
         $authDnsServers = @('15.97.197.92', '15.97.196.29')
         $results = [System.Collections.Concurrent.ConcurrentBag[PSObject]]::new()
@@ -62,6 +94,93 @@ function Validate-DnsResolution {
                 continue
             }
 
+            # Initialize the result object with ALL properties
+            $result = [PSCustomObject]@{
+                ComputerName      = $computer
+                Domain            = $systemInfo.Domain
+                FQDN              = "$computer.$($systemInfo.DNSSuffix)"
+                ExpectedIPs       = $SystemInfo.IPAddresses | Where-Object { $_ -match '^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$' }
+                LocalDnsResult    = $null
+                AuthDnsResult     = $null
+                CrossDomainResult = $null
+                ForwardMatch      = $false
+                ReverseMatch      = $false
+                SccmPresent       = $true
+                ValidationStatus  = 'Unknown'
+                ValidationSteps   = @()
+                Errors            = @()
+                DomainDnsResults  = @{
+                    'CVS' = @()
+                    'IM1' = @()
+                }
+                ValidationChain   = @{
+                    AuthDns     = $false
+                    CrossDomain = $false
+                }
+            }
+
+            # Replace the local DNS checks with domain-specific checks
+            try {
+                # DNS resolution with sequential domain checks but parallel server queries
+                foreach ($domainKey in $script:domainDNS.Keys) {
+                    $result.DomainDnsResults[$domainKey] = @()
+                    $uniqueIPs = @{}  # Track unique IPs per domain
+                    
+                    foreach ($dnsServer in $script:domainDNS[$domainKey]) {
+                        try {
+                            # Forward Lookup
+                            $forwardResult = Resolve-DnsName -Name $result.FQDN -Server $dnsServer -QuickTimeout -ErrorAction Stop
+                            $ipv4Results = $forwardResult | Where-Object { $_.Type -eq 'A' } | Select-Object -ExpandProperty IPAddress
+                            
+                            if ($ipv4Results) {
+                                # Only process this server's results if we haven't seen these IPs
+                                $newIPs = $ipv4Results | Where-Object { -not $uniqueIPs.ContainsKey($_) }
+                                
+                                if ($newIPs) {
+                                    $newIPs | ForEach-Object { $uniqueIPs[$_] = $true }
+                                    
+                                    # Reverse Lookup
+                                    $reverseResult = Resolve-DnsName -Name $newIPs[0] -Server $dnsServer -Type PTR -QuickTimeout -ErrorAction Stop
+                                    
+                                    $dnsEntry = [PSCustomObject]@{
+                                        Server       = $dnsServer
+                                        ForwardIP    = $newIPs  # Only include new IPs
+                                        ForwardName  = $forwardResult.Name
+                                        ReverseName  = $reverseResult.NameHost
+                                        ReverseMatch = $reverseResult.NameHost -eq $result.FQDN
+                                    }
+                                    
+                                    $result.DomainDnsResults[$domainKey] += $dnsEntry
+                                    $result.ValidationSteps += "$domainKey DNS Server $dnsServer lookup completed (Unique IPs: $($newIPs -join ', '))"
+                                }
+                            }
+                        }
+                        catch {
+                            $result.ValidationSteps += "$domainKey DNS Server $dnsServer failed: $_"
+                        }
+                    }
+                }
+
+                # Update validation status based on results
+                $result.ValidationStatus = if ($result.DomainDnsResults[$systemInfo.Domain].Count -gt 0) {
+                    $sourceDomainResults = $result.DomainDnsResults[$systemInfo.Domain]
+                    
+                    if ($sourceDomainResults.Where({ $_.ReverseMatch }).Count -gt 0) {
+                        "Verified"
+                    }
+                    else {
+                        "ForwardOnly"
+                    }
+                }
+                else {
+                    "Failed"
+                }
+            }
+            catch {
+                $result.Errors += "DNS resolution failed: $_"
+                $result.ValidationStatus = "Error"
+            }
+
             $powershell = [powershell]::Create().AddScript({
                     param($Computer, $SystemInfo, $AuthDnsServers)
                 
@@ -69,7 +188,7 @@ function Validate-DnsResolution {
                         ComputerName            = $Computer
                         Domain                  = $SystemInfo.Domain
                         FQDN                    = "$Computer.$($SystemInfo.DNSSuffix)"
-                        ExpectedIPs             = $SystemInfo.IPAddresses
+                        ExpectedIPs             = $SystemInfo.IPAddresses | Where-Object { $_ -match '^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$' }
                         LocalDnsResult          = $null
                         AuthDnsResult           = $null
                         CrossDomainResult       = $null
@@ -90,7 +209,7 @@ function Validate-DnsResolution {
                             Consistency = $false
                             DcAgreement = $false
                         }
-                        DnsClientServers        = (Get-DnsClientServerAddress -AddressFamily IPv4 | 
+                        DnsClientServers        = (. Get-DnsClientServerAddress -AddressFamily IPv4 | 
                                 Select-Object -ExpandProperty ServerAddresses)
                         ValidationChain         = @{
                             LocalDns    = $false
@@ -102,6 +221,10 @@ function Validate-DnsResolution {
                             MisconfiguredNICs     = @()
                             NonStandardSubnets    = @()
                         }
+                        DomainDnsResults        = @{
+                            'CVS' = @()
+                            'IM1' = @()
+                        }
                     }
 
                     try {
@@ -110,7 +233,7 @@ function Validate-DnsResolution {
                         # Local DNS check using configured DNS servers
                         foreach ($dnsServer in $result.DnsClientServers) {
                             try {
-                                $dnsResult = Resolve-DnsName -Name $result.FQDN -Server $dnsServer -ErrorAction Stop
+                                $dnsResult = Resolve-DnsName -Name $result.FQDN -Server $dnsServer -QuickTimeout -ErrorAction Stop
                                 $ipv4Results = $dnsResult | Where-Object { $_.Type -eq 'A' } | Select-Object -ExpandProperty IPAddress
                                 if ($ipv4Results) {
                                     $result.LocalDnsResult = $ipv4Results
@@ -127,7 +250,7 @@ function Validate-DnsResolution {
                         # AUTH DNS check (using known AUTH DNS servers)
                         foreach ($authServer in @('15.97.197.92', '15.97.196.29')) {
                             try {
-                                $authResult = Resolve-DnsName -Name $result.FQDN -Server $authServer -ErrorAction Stop
+                                $authResult = Resolve-DnsName -Name $result.FQDN -Server $authServer -QuickTimeout -ErrorAction Stop
                                 $ipv4Results = $authResult | Where-Object { $_.Type -eq 'A' } | Select-Object -ExpandProperty IPAddress
                                 if ($ipv4Results) {
                                     $result.AuthDnsResult = $ipv4Results
@@ -142,13 +265,13 @@ function Validate-DnsResolution {
                         }
 
                         # Check primary and secondary DCs
-                        $domainControllers = Get-DnsClientServerAddress -AddressFamily IPv4 | 
+                        $domainControllers = . Get-DnsClientServerAddress -AddressFamily IPv4 | 
                             Select-Object -ExpandProperty ServerAddresses | Select-Object -First 2
 
                         $result.DomainControllerResults = @()
                         foreach ($dc in $domainControllers) {
                             try {
-                                $dcResult = Resolve-DnsName -Name $result.FQDN -Server $dc -ErrorAction Stop
+                                $dcResult = Resolve-DnsName -Name $result.FQDN -Server $dc -QuickTimeout-ErrorAction Stop
                                 $result.ValidationSteps += "DC $dc resolution: $($dcResult.IPAddress -join ', ')"
                                 $result.DomainControllerResults += @{
                                     Server = $dc
@@ -181,7 +304,7 @@ function Validate-DnsResolution {
                             try {
                                 foreach ($ip in $result.LocalDnsResult) {
                                     $result.ValidationSteps += "Attempting reverse DNS lookup for $ip"
-                                    $reverse = Resolve-DnsName -Name $ip -Type PTR -ErrorAction Stop
+                                    $reverse = Resolve-DnsName -Name $ip -Type PTR -QuickTimeout -ErrorAction Stop
                                     
                                     # Check if reverse points back to our FQDN
                                     if ($reverse.NameHost -eq $result.FQDN) {
@@ -255,6 +378,65 @@ function Validate-DnsResolution {
                                 $result.NetworkConfiguration.MisconfiguredNICs = $nonStandardIPs
                                 $result.ValidationSteps += "WARNING: Non-standard IP addresses found: $($nonStandardIPs -join ', ')"
                                 $result.ValidationSteps += "System may have misconfigured secondary NICs (expected 15.x.x.x range only)"
+                            }
+                        }
+
+                        # For CVS domain DNS servers
+                        try {
+                            $cvsDnsServers = (Get-DnsClientServerAddress -AddressFamily IPv4 | 
+                                    Where-Object { $_.InterfaceAlias -like "*CVS*" }).ServerAddresses
+                            foreach ($dnsServer in $cvsDnsServers) {
+                                $result = Resolve-DnsName -Name $result.FQDN -Server $dnsServer -QuickTimeout -ErrorAction SilentlyContinue
+                                if ($result) {
+                                    $result.DomainDnsResults['CVS'] += $result.IPAddress
+                                }
+                            }
+                        }
+                        catch {
+                            Write-Verbose "Error querying CVS DNS: $_"
+                        }
+
+                        # For IM1 domain DNS servers
+                        try {
+                            $im1DnsServers = (Get-DnsClientServerAddress -AddressFamily IPv4 | 
+                                    Where-Object { $_.InterfaceAlias -like "*IM1*" }).ServerAddresses
+                            foreach ($dnsServer in $im1DnsServers) {
+                                $result = Resolve-DnsName -Name $result.FQDN -Server $dnsServer -QuickTimeout -ErrorAction SilentlyContinue
+                                if ($result) {
+                                    $result.DomainDnsResults['IM1'] += $result.IPAddress
+                                }
+                            }
+                        }
+                        catch {
+                            Write-Verbose "Error querying IM1 DNS: $_"
+                        }
+
+                        # Add domain-specific DNS queries
+                        $script:domainDNS = @{
+                            'CVS' = @('15.97.197.92', '15.97.196.29')  # corsi-cvsdc02/03
+                            'IM1' = @('15.97.196.26', '15.97.196.27', '15.97.196.28')  # im1dc01/02/03
+                        }
+
+                        # Query each domain's DNS servers
+                        foreach ($domain in $script:domainDNS.Keys) {
+                            $result.DomainDnsResults[$domain] = @()
+                            foreach ($dnsServer in $script:domainDNS[$domain]) {
+                                try {
+                                    $dnsResult = Resolve-DnsName -Name $result.FQDN -Server $dnsServer -ErrorAction Stop
+                                    $ipv4Results = $dnsResult | Where-Object { $_.Type -eq 'A' } | Select-Object -ExpandProperty IPAddress
+                                    
+                                    if ($ipv4Results) {
+                                        $result.DomainDnsResults[$domain] += [PSCustomObject]@{
+                                            Server = $dnsServer
+                                            IP     = $ipv4Results
+                                            Name   = $result.FQDN
+                                        }
+                                        $result.ValidationSteps += "$domain DNS Server $dnsServer returned: $($ipv4Results -join ', ')"
+                                    }
+                                }
+                                catch {
+                                    $result.ValidationSteps += "$domain DNS Server $dnsServer failed: $_"
+                                }
                             }
                         }
 
@@ -381,6 +563,35 @@ function Validate-DnsResolution {
             $problemRecords | Format-DnsValidationResults
         }
 
+        if ($ReportAction -ne 'None') {
+            Write-Progress -Id $progressId -Activity "DNS Validation" -Status "Generating report..." -PercentComplete 95
+
+            try {
+                # Generate report with OutputPath parameter
+                $reportPath = $results | Export-DnsValidationReport `
+                    -OutputPath (Join-Path $PSScriptRoot "DNSValidationReport-$(Get-Date -Format 'yyyyMMdd-HHmm').html") `
+                    -EmailRecipients $EmailRecipients `
+                    -SendEmail:($ReportAction -in 'Email', 'Both')
+                
+                Write-Verbose "Report generated at: $reportPath"
+
+                # Handle viewing
+                if ($ReportAction -in 'View', 'Both') {
+                    if (Test-Path $reportPath) {
+                        Write-Host "Opening report: $reportPath"
+                        Invoke-Item $reportPath
+                    }
+                    else {
+                        Write-Warning "Report file not found at: $reportPath"
+                    }
+                }
+            }
+            catch {
+                Write-Warning "Report handling failed: $_"
+                Write-Verbose $_.Exception.Message
+            }
+        }
+        
         # Return results sorted by status (most critical first)
         return $results | Sort-Object -Property @{
             Expression = {
@@ -474,52 +685,31 @@ function Format-DnsValidationResults {
     
     process {
         foreach ($result in $Results) {
-            # Create color-coded status indicator
-            $statusColor = switch ($result.ValidationStatus) {
-                'Failed' { 'Red' }
-                'AuthDNSIssue' { 'Yellow' }
-                'Verified' { 'Green' }
-                'FullyVerified' { 'Cyan' }
-                default { 'White' }
-            }
-
-            # Build DNS chain visualization
-            $dnsChain = @"
-DNS Resolution Chain for $($result.ComputerName).$($result.Domain)
-Local DNS  : $($result.LocalDnsResult)
-AUTH DNS   : $($result.AuthDnsResult)
-Expected   : $($result.ExpectedIPs -join ', ')
-"@
-            
-            # Add trust path indicators
-            $trustPath = @"
-Trust Path:
-CVS → AUTH : $([char]::ConvertFromUtf32(0x2714))
-AUTH → IM1 : $([char]::ConvertFromUtf32(0x2714))
-"@
-
-            # Highlight discrepancies
-            $issues = @()
-            if ($result.LocalDnsResult -ne $result.AuthDnsResult) {
-                $issues += "Local/AUTH DNS mismatch"
-            }
-            if ($result.ExpectedIPs -notcontains $result.LocalDnsResult) {
-                $issues += "IP doesn't match SCCM record"
-            }
-            if (-not $result.ReverseMatch) {
-                $issues += "Reverse lookup failed"
-            }
-
-            # Output formatted result
             Write-Host "`n$('=' * 80)" -ForegroundColor Blue
-            Write-Host $dnsChain
-            Write-Host "Status: $($result.ValidationStatus)" -ForegroundColor $statusColor
-            Write-Host $trustPath
+            Write-Host "DNS Resolution Chain for $($result.FQDN)"
             
-            if ($issues) {
-                Write-Host "`nDiscrepancies Found:" -ForegroundColor Yellow
-                $issues | ForEach-Object { Write-Host "- $_" -ForegroundColor Red }
+            # Add domain DNS results display
+            Write-Host "`n$($result.Domain) DNS Results:"
+            foreach ($dnsResult in $result.DomainDnsResults[$result.Domain]) {
+                Write-Host "$($dnsResult.Server): $($dnsResult.IP) ($($dnsResult.Name))"
+            }
+            
+            # Keep existing output
+            Write-Host "`nLocal DNS  : $($result.LocalDnsResult -join ', ')"
+            Write-Host "AUTH DNS   : $($result.AuthDnsResult -join ', ')"
+            Write-Host "Expected   : $($result.ExpectedIPs -join ', ')"
+            Write-Host "Status: $($result.ValidationStatus)" -ForegroundColor Yellow
+            Write-Host "`nTrust Path:"
+            Write-Host "CVS -> AUTH : $(if($result.ValidationChain.LocalDns) { "PASS" } else { "FAIL" })"
+            Write-Host "AUTH -> IM1 : $(if($result.ValidationChain.AuthDns) { "PASS" } else { "FAIL" })"
+            
+            if ($result.Errors -or -not $result.ForwardMatch -or -not $result.ReverseMatch) {
+                Write-Host "`nDiscrepancies Found:"
+                if (-not $result.ForwardMatch) { Write-Host "- IP doesn't match SCCM record" }
+                if (-not $result.ReverseMatch) { Write-Host "- Reverse lookup failed" }
+                foreach ($error in $result.Errors) { Write-Host "- $error" }
             }
         }
     }
-} 
+}
+
