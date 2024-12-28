@@ -1,0 +1,315 @@
+{
+  "Timestamp": "2024-12-27T12:50:43.9083812-08:00",
+  "Results": {
+    "FA23-552": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "FA30-529": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "PWAX-Z1-FSASPC": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W0C-PBANK208": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W7C-PMDL029": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "WINFRA1": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "FA23-505": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "PWAX-Z0-LPCPC": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W7C-CHEM032": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W7C-MATT007": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "F22SC502": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "PWAX-Z3-SCOPE1": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W2R-VOXP113": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W0C-PBANK214": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "PWAX-Z2-CDBASE": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "FA22-613": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W10-DEV13": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W7C-XSECT007": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W0C-PBANK360": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "CRU1-Z3B-LK4BAS": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "NDTSORT04": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W0C-PBANK384": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "FA30-530": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W0C-PBANK394": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W4C-MTSL079": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W7C-MCL-IPH020": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "CRU1-Z3-TMP9": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W0C-PBANK344": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "PWAX-Z1-MLPC": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W0C-PBANK362": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "IVSCDOL09": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "CORSI-FEDEX": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "SPETEST01T": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W5R-LASER003": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "FA22-534": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "FA22-556": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W7M-LOG001": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W0C-PBANK366": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W7I-EFA004": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "CRU1-Z2C-DPC4": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "TDCCLEN01": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W2M-LOG006": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "PWAX-Z9-CART03": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W7I-EBFA012": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W7C-TA002": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W0C-PBANK127": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "PWAX-Z0-LPCSPC": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "CORSIWEB-STGN1": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "W2C-VOXP052": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    },
+    "FA22-539": {
+      "Error": {
+        "ScriptStackTrace": "at <ScriptBlock>, D:\\Pingz\\Network-Ping\\NetworkValidation\\Core\\Test-NetworkValidationSuite.ps1: line 94\r\nat <ScriptBlock>, <No file>: line 1",
+        "Message": "A parameter cannot be found that matches parameter name 'ComputerName'."
+      }
+    }
+  },
+  "Summary": {
+    "Components": {
+      "SCCM": 0,
+      "DNS": 0,
+      "Ping": 0
+    },
+    "TotalTargets": 50,
+    "Failed": 50,
+    "Successful": 0
+  }
+}
